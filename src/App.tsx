@@ -4,6 +4,7 @@
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './lib/ThemeContext';
 import { Layout } from './components/Layout';
 import Bismillah from './pages/Bismillah';
 import Alhamdulillah from './pages/Alhamdulillah';
@@ -26,34 +27,36 @@ import OrderAnalysis from './pages/analisis/alhamdulillah/OrderAnalysis';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/analisis/overview" replace />} />
-          <Route path="bismillah" element={<Bismillah />} />
-          <Route path="alhamdulillah" element={<Alhamdulillah />} />
-          
-          <Route path="analisis" element={<AnalyticsLayout />}>
-            <Route path="overview" element={<Overview />} />
-            
-            <Route path="bismillah/lead" element={<LeadAnalysis />} />
-            <Route path="bismillah/conversion" element={<ConversionAnalysis />} />
-            <Route path="bismillah/sales" element={<SalesPerformance />} />
-            <Route path="bismillah/source" element={<SourceAnalysis />} />
-            <Route path="bismillah/product" element={<ProductAnalysis />} />
-            <Route path="bismillah/followup" element={<FollowUpAnalysis />} />
-            
-            <Route path="alhamdulillah/sales" element={<SalesAnalysis />} />
-            <Route path="alhamdulillah/product" element={<AlhamProductAnalysis />} />
-            <Route path="alhamdulillah/customer" element={<CustomerAnalysis />} />
-            <Route path="alhamdulillah/performance" element={<SalesPerformanceAlham />} />
-            <Route path="alhamdulillah/production" element={<ProductionAnalysis />} />
-            <Route path="alhamdulillah/order" element={<OrderAnalysis />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/analisis/overview" replace />} />
+            <Route path="bismillah" element={<Bismillah />} />
+            <Route path="alhamdulillah" element={<Alhamdulillah />} />
+
+            <Route path="analisis" element={<AnalyticsLayout />}>
+              <Route path="overview" element={<Overview />} />
+
+              <Route path="bismillah/lead" element={<LeadAnalysis />} />
+              <Route path="bismillah/conversion" element={<ConversionAnalysis />} />
+              <Route path="bismillah/sales" element={<SalesPerformance />} />
+              <Route path="bismillah/source" element={<SourceAnalysis />} />
+              <Route path="bismillah/product" element={<ProductAnalysis />} />
+              <Route path="bismillah/followup" element={<FollowUpAnalysis />} />
+
+              <Route path="alhamdulillah/sales" element={<SalesAnalysis />} />
+              <Route path="alhamdulillah/product" element={<AlhamProductAnalysis />} />
+              <Route path="alhamdulillah/customer" element={<CustomerAnalysis />} />
+              <Route path="alhamdulillah/performance" element={<SalesPerformanceAlham />} />
+              <Route path="alhamdulillah/production" element={<ProductionAnalysis />} />
+              <Route path="alhamdulillah/order" element={<OrderAnalysis />} />
+            </Route>
+
+            <Route path="settings" element={<Settings />} />
           </Route>
-          
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

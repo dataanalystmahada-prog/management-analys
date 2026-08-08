@@ -47,12 +47,15 @@ export default function Overview() {
   }, [alhamdulillahData]);
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-500">Loading overview...</div>;
+    return <div className="p-8 text-center text-gray-500 dark:text-slate-400">Loading overview...</div>;
   }
+
+  const cardClasses = "bg-white dark:bg-white/5 dark:backdrop-blur-md p-5 rounded-2xl shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-gray-200 dark:border-white/10 relative overflow-hidden group transition-colors duration-300";
+  const titleClasses = "font-semibold text-gray-900 dark:text-slate-200 mb-4 flex items-center gap-2";
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-transparent dark:bg-gradient-to-r dark:from-emerald-400 dark:to-cyan-400 dark:bg-clip-text">Dashboard Overview</h1>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -70,31 +73,33 @@ export default function Overview() {
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-4">Trend Leads</h3>
-          <div className="h-64">
+        <div className={cardClasses}>
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] group-hover:bg-emerald-500/20 transition-all duration-500" />
+          <h3 className={titleClasses}><span className="w-2 h-2 rounded-full bg-emerald-400"></span>Trend Leads</h3>
+          <div className="h-64 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendLeads}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                <RechartsTooltip cursor={{fill: 'transparent'}} />
-                <Line type="monotone" dataKey="Leads" stroke="#3b82f6" strokeWidth={3} dot={{r: 4}} activeDot={{r: 6}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{backgroundColor: '#0f172a', borderColor: '#064e3b', color: '#f8fafc', borderRadius: '0.5rem'}} />
+                <Line type="monotone" dataKey="Leads" stroke="#34d399" strokeWidth={3} dot={{r: 4, fill: '#0f172a', stroke: '#34d399', strokeWidth: 2}} activeDot={{r: 6, fill: '#34d399'}} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-4">Trend Sales</h3>
-          <div className="h-64">
+        <div className={cardClasses}>
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-500" />
+          <h3 className={titleClasses}><span className="w-2 h-2 rounded-full bg-cyan-400"></span>Trend Sales</h3>
+          <div className="h-64 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendSales}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} tickFormatter={(value) => `Rp ${(value / 1000000).toFixed(0)}M`} />
-                <RechartsTooltip cursor={{fill: 'transparent'}} formatter={(value: number) => `Rp ${value.toLocaleString()}`} />
-                <Line type="monotone" dataKey="Sales" stroke="#10b981" strokeWidth={3} dot={{r: 4}} activeDot={{r: 6}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} tickFormatter={(value) => `Rp ${(value / 1000000).toFixed(0)}M`} />
+                <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{backgroundColor: '#0f172a', borderColor: '#064e3b', color: '#f8fafc', borderRadius: '0.5rem'}} formatter={(value: number) => `Rp ${value.toLocaleString()}`} />
+                <Line type="monotone" dataKey="Sales" stroke="#22d3ee" strokeWidth={3} dot={{r: 4, fill: '#0f172a', stroke: '#22d3ee', strokeWidth: 2}} activeDot={{r: 6, fill: '#22d3ee'}} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -103,46 +108,46 @@ export default function Overview() {
 
       {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-4">Top Leads by Source</h3>
-          <div className="h-64">
+        <div className={cardClasses}>
+          <h3 className={titleClasses}>Top Leads by Source</h3>
+          <div className="h-64 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={leadsBySource} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12}} width={100} />
-                <RechartsTooltip cursor={{fill: '#f3f4f6'}} />
-                <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e293b" />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} width={100} />
+                <RechartsTooltip cursor={{fill: '#1e293b'}} contentStyle={{backgroundColor: '#0f172a', borderColor: '#064e3b', color: '#f8fafc', borderRadius: '0.5rem'}} />
+                <Bar dataKey="count" fill="#34d399" radius={[0, 4, 4, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-4">Top Sales by Brand</h3>
-          <div className="h-64">
+        <div className={cardClasses}>
+          <h3 className={titleClasses}>Top Sales by Brand</h3>
+          <div className="h-64 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesByBrand} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{fontSize: 12}} tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`} />
-                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12}} width={100} />
-                <RechartsTooltip cursor={{fill: '#f3f4f6'}} formatter={(value: number) => `Rp ${value.toLocaleString()}`} />
-                <Bar dataKey="sales" fill="#10b981" radius={[0, 4, 4, 0]} barSize={20} />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e293b" />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`} />
+                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} width={100} />
+                <RechartsTooltip cursor={{fill: '#1e293b'}} contentStyle={{backgroundColor: '#0f172a', borderColor: '#064e3b', color: '#f8fafc', borderRadius: '0.5rem'}} formatter={(value: number) => `Rp ${value.toLocaleString()}`} />
+                <Bar dataKey="sales" fill="#22d3ee" radius={[0, 4, 4, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
         
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-4">Top Closing by PIC</h3>
-          <div className="h-64">
+        <div className={cardClasses}>
+          <h3 className={titleClasses}>Top Closing by PIC</h3>
+          <div className="h-64 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={closingByPic} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12}} width={100} />
-                <RechartsTooltip cursor={{fill: '#f3f4f6'}} />
-                <Bar dataKey="count" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={20} />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e293b" />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} width={100} />
+                <RechartsTooltip cursor={{fill: '#1e293b'}} contentStyle={{backgroundColor: '#0f172a', borderColor: '#064e3b', color: '#f8fafc', borderRadius: '0.5rem'}} />
+                <Bar dataKey="count" fill="#818cf8" radius={[0, 4, 4, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -155,9 +160,10 @@ export default function Overview() {
 
 function KpiCard({ title, value }: { title: string, value: string | number }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 truncate" title={title}>{title}</p>
-      <p className="text-xl font-bold text-gray-900 truncate">{value}</p>
+    <div className="bg-white dark:bg-white/5 dark:backdrop-blur-md p-5 rounded-2xl shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-gray-200 dark:border-white/10 relative overflow-hidden group hover:border-blue-300 dark:hover:border-white/20 transition-all duration-300">
+      <div className="hidden dark:block absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-[20px] group-hover:bg-emerald-500/20 transition-all duration-300" />
+      <p className="text-xs font-semibold text-gray-500 dark:text-emerald-500/70 uppercase tracking-widest mb-2 truncate relative z-10" title={title}>{title}</p>
+      <p className="text-2xl font-bold text-gray-900 dark:text-slate-100 truncate relative z-10 drop-shadow-sm">{value}</p>
     </div>
   );
 }
