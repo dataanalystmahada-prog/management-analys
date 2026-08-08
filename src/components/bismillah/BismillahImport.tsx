@@ -236,7 +236,7 @@ export function BismillahImport({ onBack, onImportComplete }: Props) {
         const { error } = await supabase.from('bismillah').insert(chunk);
         if (error) {
            console.error('Chunk insert error:', error);
-           errorCount += chunk.length;
+           throw new Error(error.message || JSON.stringify(error));
         } else {
            successCount += chunk.length;
         }
