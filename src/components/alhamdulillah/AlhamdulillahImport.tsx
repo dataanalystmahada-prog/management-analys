@@ -25,11 +25,14 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
   
   // DB columns
   const dbColumns = [
-    'tgl_masuk', 'bulan', 'inv', 'brand', 'sumber_klien', 'status_klien', 
-    'nama_klien', 'pic_sales', 'transaksi', 'produk', 'sub_produk', 
-    'kategori_perusahaan', 'provinsi', 'kota', 'biaya_ongkir', 
-    'penjualan', 'qty', 'status_akhir', 'sub_status_akhir', 'purchasing', 
-    'produksi', 'durasi_closing', 'waktu_order_selesai', 'perusahaan'
+    'produksi', 'tgl_masuk', 'bulan', 'inv', 'chat_masuk', 'brand', 
+    'sumber_klien', 'status_klien', 'nama_klien', 'pic_sales', 'transaksi', 
+    'produk', 'sub_produk', 'kode', 'kategory', 'type_kategoy', 'lapisan_box', 
+    'perusahaan', 'kategori_perusahaan', 'informasi_kebutuhan', 'alamat_kirim', 
+    'kota', 'provinsi', 'ekspedisi', 'biaya_ongkir', 'deadline_kons', 'diskon', 
+    'ppn', 'pph', 'penjualan', 'qty', 'email_klien', 'file_design', 'status_kons', 
+    'status_akhir', 'sub_status_akhir', 'purchasing', 'solusi', 'catatan_solusi', 
+    'durasi_closing', 'waktu_order_selesai', 'isi_kuisioner', 'waktu_review_google'
   ];
 
   const [mapping, setMapping] = useState<Record<string, string>>({});
@@ -102,7 +105,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
         if (val === undefined || val === '') val = null;
 
         // Validation
-        if (['qty', 'biaya_ongkir', 'penjualan', 'durasi_closing'].includes(dbCol) && val !== null) {
+        if (['qty', 'biaya_ongkir', 'penjualan', 'durasi_closing', 'diskon', 'ppn', 'pph'].includes(dbCol) && val !== null) {
           const num = Number(String(val).replace(/[^0-9.-]+/g,""));
           if (isNaN(num)) {
             isRowValid = false;
@@ -111,8 +114,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
             val = num;
           }
         }
-        
-        if (['tgl_masuk'].includes(dbCol) && val !== null) {
+        if (['tgl_masuk', 'chat_masuk', 'deadline_kons', 'waktu_order_selesai'].includes(dbCol) && val !== null) {
            const parsed = parseDate(val as string);
            if (!parsed) {
               isRowValid = false;
@@ -126,11 +128,9 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
 
       // Dup Check (Simple unique key logic, e.g. nama_lengkap + perusahaan)
       const dupKey = `${record.inv || ''}-${record.produk || ''}`.toLowerCase();
-      if (dupKey !== '-') {
+      if (dupKey !== '-' && dupKey !== '') {
         if (seenMap.has(dupKey)) {
            duplicateCount++;
-           isRowValid = false;
-           errorMsg = 'Duplicate in CSV';
         } else {
            seenMap.add(dupKey);
         }
@@ -299,19 +299,23 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
           <div className="grid grid-cols-4 gap-4">
              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center">
                 <div className="text-2xl font-bold text-gray-900">{rawData.length}</div>
-                <div className="text-xs text-gray-500 uppercase font-medium mt-1">Total Row</div>
+                <div className="text-xs text-gray-500 uppercase font-bold mt-1">Total Row</div>
+                <div className="text-[10px] text-gray-400 mt-1 capitalize font-normal">Semua baris di CSV</div>
              </div>
              <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
                 <div className="text-2xl font-bold text-green-700">{mappedData.valid.length}</div>
-                <div className="text-xs text-green-600 uppercase font-medium mt-1">Valid</div>
+                <div className="text-xs text-green-600 uppercase font-bold mt-1">Valid</div>
+                <div className="text-[10px] text-green-600/70 mt-1 capitalize font-normal">Siap untuk di-import</div>
              </div>
              <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
                 <div className="text-2xl font-bold text-red-700">{mappedData.invalid.length}</div>
-                <div className="text-xs text-red-600 uppercase font-medium mt-1">Invalid</div>
+                <div className="text-xs text-red-600 uppercase font-bold mt-1">Invalid</div>
+                <div className="text-[10px] text-red-500/70 mt-1 capitalize font-normal">Data error / gagal</div>
              </div>
              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-center">
                 <div className="text-2xl font-bold text-yellow-700">{mappedData.duplicateCount}</div>
-                <div className="text-xs text-yellow-600 uppercase font-medium mt-1">Duplicate</div>
+                <div className="text-xs text-yellow-600 uppercase font-bold mt-1">Duplicate</div>
+                <div className="text-[10px] text-yellow-600/70 mt-1 capitalize font-normal">Kembar tapi tetap masuk</div>
              </div>
           </div>
 

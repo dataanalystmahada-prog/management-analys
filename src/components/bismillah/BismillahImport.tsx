@@ -126,11 +126,9 @@ export function BismillahImport({ onBack, onImportComplete }: Props) {
 
       // Dup Check (Simple unique key logic, e.g. nama_lengkap + perusahaan)
       const dupKey = `${record.nama_lengkap || ''}-${record.perusahaan || ''}`.toLowerCase();
-      if (dupKey !== '-') {
+      if (dupKey !== '-' && dupKey !== '') {
         if (seenMap.has(dupKey)) {
            duplicateCount++;
-           isRowValid = false;
-           errorMsg = 'Duplicate in CSV';
         } else {
            seenMap.add(dupKey);
         }
@@ -299,19 +297,23 @@ export function BismillahImport({ onBack, onImportComplete }: Props) {
           <div className="grid grid-cols-4 gap-4">
              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center">
                 <div className="text-2xl font-bold text-gray-900">{rawData.length}</div>
-                <div className="text-xs text-gray-500 uppercase font-medium mt-1">Total Row</div>
+                <div className="text-xs text-gray-500 uppercase font-bold mt-1">Total Row</div>
+                <div className="text-[10px] text-gray-400 mt-1 capitalize font-normal">Semua baris di CSV</div>
              </div>
              <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
                 <div className="text-2xl font-bold text-green-700">{mappedData.valid.length}</div>
-                <div className="text-xs text-green-600 uppercase font-medium mt-1">Valid</div>
+                <div className="text-xs text-green-600 uppercase font-bold mt-1">Valid</div>
+                <div className="text-[10px] text-green-600/70 mt-1 capitalize font-normal">Siap untuk di-import</div>
              </div>
              <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
                 <div className="text-2xl font-bold text-red-700">{mappedData.invalid.length}</div>
-                <div className="text-xs text-red-600 uppercase font-medium mt-1">Invalid</div>
+                <div className="text-xs text-red-600 uppercase font-bold mt-1">Invalid</div>
+                <div className="text-[10px] text-red-500/70 mt-1 capitalize font-normal">Data error / gagal</div>
              </div>
              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-center">
                 <div className="text-2xl font-bold text-yellow-700">{mappedData.duplicateCount}</div>
-                <div className="text-xs text-yellow-600 uppercase font-medium mt-1">Duplicate</div>
+                <div className="text-xs text-yellow-600 uppercase font-bold mt-1">Duplicate</div>
+                <div className="text-[10px] text-yellow-600/70 mt-1 capitalize font-normal">Kembar tapi tetap masuk</div>
              </div>
           </div>
 
