@@ -58,6 +58,7 @@ export interface AlhamdulillahRecord {
   status_akhir: string | null;
   sub_status_akhir: string | null;
   purchasing: string | null;
+  produksi_pic: string | null;
   produksi: string | null;
   durasi_closing: number | null;
   waktu_order_selesai: string | null;

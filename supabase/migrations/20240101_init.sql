@@ -94,6 +94,7 @@ CREATE TABLE alhamdulillah (
     status_akhir TEXT,
     sub_status_akhir TEXT,
     purchasing TEXT,
+    produksi_pic TEXT,
     solusi TEXT,
     catatan_solusi TEXT,
     durasi_closing TEXT,

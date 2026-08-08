@@ -33,7 +33,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
     'perusahaan', 'kategori_perusahaan', 'informasi_kebutuhan', 'alamat_kirim', 
     'kota', 'provinsi', 'ekspedisi', 'biaya_ongkir', 'deadline_kons', 'diskon', 
     'ppn', 'pph', 'penjualan', 'qty', 'email_klien', 'file_design', 'status_kons', 
-    'status_akhir', 'sub_status_akhir', 'purchasing', 'solusi', 'catatan_solusi', 
+    'status_akhir', 'sub_status_akhir', 'purchasing', 'produksi_pic', 'solusi', 'catatan_solusi', 
     'durasi_closing', 'waktu_order_selesai', 'isi_kuisioner', 'waktu_review_google'
   ];
 

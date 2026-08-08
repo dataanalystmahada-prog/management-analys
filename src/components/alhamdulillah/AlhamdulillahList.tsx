@@ -235,7 +235,7 @@ export function AlhamdulillahList({ onImportClick, onEditClick }: Props) {
             <thead className="bg-gray-50 dark:bg-slate-900/80">
               <tr>
                 <th scope="col" className="sticky left-0 bg-gray-50 dark:bg-slate-900 z-10 px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">Aksi</th>
-                {['Tgl Masuk', 'Bulan', 'INV', 'Brand', 'Sumber Klien', 'Status Klien', 'Status', 'Nama Klien', 'PIC Sales', 'Transaksi', 'Produk', 'Sub Produk', 'Kategori Perusahaan', 'Provinsi', 'Kota', 'Biaya Ongkir', 'Penjualan', 'QTY', 'Status Akhir', 'Sub Status Akhir', 'Purchasing', 'Produksi', 'Durasi Closing', 'Waktu Order Selesai', 'Perusahaan'].map((col) => (
+                {['Tgl Masuk', 'Bulan', 'INV', 'Brand', 'Sumber Klien', 'Status Klien', 'Status', 'Nama Klien', 'PIC Sales', 'Transaksi', 'Produk', 'Sub Produk', 'Kategori Perusahaan', 'Provinsi', 'Kota', 'Biaya Ongkir', 'Penjualan', 'QTY', 'Status Akhir', 'Sub Status Akhir', 'Purchasing', 'Produksi PIC', 'Solusi', 'Catatan Solusi', 'Produksi', 'Durasi Closing', 'Waktu Order Selesai', 'Perusahaan'].map((col) => (
                   <th key={col} scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">
                     {col}
                   </th>
@@ -285,6 +285,9 @@ export function AlhamdulillahList({ onImportClick, onEditClick }: Props) {
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.status_akhir}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.sub_status_akhir}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.purchasing}</td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.produksi_pic}</td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.solusi}</td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.catatan_solusi}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.produksi}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.durasi_closing}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-slate-300">{row.waktu_order_selesai}</td>
