@@ -1,0 +1,65 @@
+export interface BismillahRecord {
+  id?: string;
+  tanggal: string | null;
+  brand: string | null;
+  bulan: string | null;
+  sumber_klien: string | null;
+  status_klien: string | null;
+  status: string | null;
+  nama_lengkap: string | null;
+  r: string | null;
+  i: string | null;
+  b: string | null;
+  u: string | null;
+  s: string | null;
+  attention: string | null;
+  produk_tanya: string | null;
+  qty: number | null;
+  potensi_omset: number | null;
+  perusahaan: string | null;
+  pic: string | null;
+  progress: string | null;
+  t_date: string | null;
+  req_design: string | null;
+  next_action: string | null;
+  p_date: string | null;
+  follow_up: string | null;
+  status_lead_otomatis: string | null;
+  status_order: string | null;
+  produk_deal: string | null;
+  lead_qualified: string | null;
+  time_status_order: string | null;
+  pic_2: string | null;
+  keterangan: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface AlhamdulillahRecord {
+  id?: string;
+  tgl_masuk: string | null;
+  bulan: string | null;
+  inv: string | null;
+  brand: string | null;
+  sumber_klien: string | null;
+  status_klien: string | null;
+  nama_klien: string | null;
+  pic_sales: string | null;
+  transaksi: string | null;
+  produk: string | null;
+  sub_produk: string | null;
+  kategori_perusahaan: string | null;
+  provinsi: string | null;
+  kota: string | null;
+  biaya_ongkir: number | null;
+  penjualan: number | null;
+  qty: number | null;
+  status_akhir: string | null;
+  sub_status_akhir: string | null;
+  purchasing: string | null;
+  produksi: string | null;
+  durasi_closing: number | null;
+  waktu_order_selesai: string | null;
+  perusahaan: string | null;
+  created_at?: string;
+}
