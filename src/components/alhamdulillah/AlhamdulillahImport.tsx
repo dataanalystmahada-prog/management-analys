@@ -8,12 +8,14 @@ interface Props {
   onImportComplete: () => void;
 }
 
-type Step = 'upload' | 'mapping' | 'preview' | 'importing' | 'result';
+type Step = 'upload' | 'mapping' | 'preview1' | 'preview2' | 'importing' | 'result';
 
 interface MappedData {
   valid: any[];
   invalid: any[];
   duplicateCount: number;
+  globalDuplicates?: any[];
+  newValid?: any[];
 }
 
 export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
@@ -26,7 +28,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
   // DB columns
   const dbColumns = [
     'produksi', 'tgl_masuk', 'bulan', 'inv', 'chat_masuk', 'brand', 
-    'sumber_klien', 'status_klien', 'nama_klien', 'pic_sales', 'transaksi', 
+    'sumber_klien', 'status_klien', 'status', 'nama_klien', 'pic_sales', 'transaksi', 
     'produk', 'sub_produk', 'kode', 'kategory', 'type_kategoy', 'lapisan_box', 
     'perusahaan', 'kategori_perusahaan', 'informasi_kebutuhan', 'alamat_kirim', 
     'kota', 'provinsi', 'ekspedisi', 'biaya_ongkir', 'deadline_kons', 'diskon', 
@@ -36,8 +38,9 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
   ];
 
   const [mapping, setMapping] = useState<Record<string, string>>({});
-  const [mappedData, setMappedData] = useState<MappedData>({ valid: [], invalid: [], duplicateCount: 0 });
+  const [mappedData, setMappedData] = useState<MappedData>({ valid: [], invalid: [], duplicateCount: 0, globalDuplicates: [], newValid: [] });
   const [importResult, setImportResult] = useState({ success: 0, error: 0 });
+  const [isChecking, setIsChecking] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -143,17 +146,67 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
       }
     });
 
-    setMappedData({ valid, invalid, duplicateCount });
-    setStep('preview');
+    setMappedData({ valid, invalid, duplicateCount, globalDuplicates: [], newValid: [] });
+    setStep('preview1');
   };
 
-  const handleImport = async () => {
+  const checkGlobalDuplicates = async () => {
+    if (!import.meta.env.VITE_SUPABASE_URL) return;
+    setIsChecking(true);
+    try {
+      const { data, error } = await supabase
+        .from('alhamdulillah')
+        .select('inv, nama_klien');
+      
+      if (error) throw error;
+
+      const existingSet = new Set(
+        data.map(d => `${d.inv || ''}|${d.nama_klien || ''}`.toLowerCase())
+      );
+
+      const duplicates: any[] = [];
+      const newValid: any[] = [];
+
+      mappedData.valid.forEach(row => {
+        const key = `${row.inv || ''}|${row.nama_klien || ''}`.toLowerCase();
+        if (existingSet.has(key)) {
+          duplicates.push(row);
+        } else {
+          newValid.push(row);
+        }
+      });
+
+      setMappedData(prev => ({
+        ...prev,
+        globalDuplicates: duplicates,
+        newValid: newValid
+      }));
+      setStep('preview2');
+    } catch (err) {
+      console.error('Error checking global duplicates:', err);
+      alert('Gagal mengecek duplikat di database.');
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  const handleImport = async (includeDuplicates: boolean) => {
     if (!import.meta.env.VITE_SUPABASE_URL) {
       alert('Supabase URL belum dikonfigurasi.');
       return;
     }
     setStep('importing');
     
+    const dataToImport = includeDuplicates 
+      ? [...(mappedData.newValid || []), ...(mappedData.globalDuplicates || [])]
+      : (mappedData.newValid || []);
+
+    if (dataToImport.length === 0) {
+      alert('Tidak ada data yang valid untuk di-import.');
+      setStep('preview2');
+      return;
+    }
+
     try {
       // 1. Create Batch
       const { data: batchData, error: batchError } = await supabase
@@ -161,7 +214,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
         .insert({
            file_name: file?.name || 'unknown.csv',
            data_type: 'alhamdulillah',
-           row_count: mappedData.valid.length + mappedData.invalid.length,
+           row_count: dataToImport.length + mappedData.invalid.length,
            status: 'processing'
         })
         .select()
@@ -176,8 +229,8 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
       let successCount = 0;
       let errorCount = 0;
 
-      for (let i = 0; i < mappedData.valid.length; i += chunkSize) {
-        const chunk = mappedData.valid.slice(i, i + chunkSize).map(item => {
+      for (let i = 0; i < dataToImport.length; i += chunkSize) {
+        const chunk = dataToImport.slice(i, i + chunkSize).map(item => {
           const { _rowIndex, ...rest } = item;
           return { ...rest, import_batch_id: batchId };
         });
@@ -203,7 +256,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
     } catch (err: any) {
       console.error('Import failed:', err);
       setErrorMsg(`Gagal melakukan import: ${err.message}`);
-      setStep('preview');
+      setStep('preview2');
     }
   };
 
@@ -294,8 +347,11 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
         </div>
       )}
 
-      {step === 'preview' && (
+      {step === 'preview1' && (
         <div className="space-y-6">
+          <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
+            <strong>Preview Tahap 1 (Pengecekan File CSV):</strong> Memeriksa format kolom pada file CSV Anda.
+          </div>
           <div className="grid grid-cols-4 gap-4">
              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center">
                 <div className="text-2xl font-bold text-gray-900">{rawData.length}</div>
@@ -304,8 +360,8 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
              </div>
              <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
                 <div className="text-2xl font-bold text-green-700">{mappedData.valid.length}</div>
-                <div className="text-xs text-green-600 uppercase font-bold mt-1">Valid</div>
-                <div className="text-[10px] text-green-600/70 mt-1 capitalize font-normal">Siap untuk di-import</div>
+                <div className="text-xs text-green-600 uppercase font-bold mt-1">Format Valid</div>
+                <div className="text-[10px] text-green-600/70 mt-1 capitalize font-normal">Lolos Cek Format</div>
              </div>
              <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
                 <div className="text-2xl font-bold text-red-700">{mappedData.invalid.length}</div>
@@ -314,7 +370,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
              </div>
              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-center">
                 <div className="text-2xl font-bold text-yellow-700">{mappedData.duplicateCount}</div>
-                <div className="text-xs text-yellow-600 uppercase font-bold mt-1">Duplicate</div>
+                <div className="text-xs text-yellow-600 uppercase font-bold mt-1">Duplicate CSV</div>
                 <div className="text-[10px] text-yellow-600/70 mt-1 capitalize font-normal">Kembar tapi tetap masuk</div>
              </div>
           </div>
@@ -323,7 +379,7 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
             <div className="bg-white border border-red-200 rounded-lg overflow-hidden">
               <div className="bg-red-50 px-4 py-2 border-b border-red-200">
                 <h3 className="text-sm font-medium text-red-800 flex items-center">
-                  <AlertCircle size={16} className="mr-2" /> Data Error (Tidakan di-import)
+                  <AlertCircle size={16} className="mr-2" /> Data Error (Tidak akan di-import)
                 </h3>
               </div>
               <div className="max-h-48 overflow-y-auto p-4 bg-red-50/30">
@@ -344,15 +400,61 @@ export function AlhamdulillahImport({ onBack, onImportComplete }: Props) {
               onClick={() => setStep('mapping')}
               className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 flex items-center"
             >
-              <ArrowLeft size={16} className="mr-2" /> Kembali
+              <ArrowLeft size={16} className="mr-2" /> Kembali ke Mapping
             </button>
             <button 
-              onClick={handleImport}
-              disabled={mappedData.valid.length === 0}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              onClick={checkGlobalDuplicates}
+              disabled={mappedData.valid.length === 0 || isChecking}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors flex items-center"
             >
-              Import {mappedData.valid.length} Data
+              {isChecking ? 'Mengecek Database...' : 'Lanjut Preview Tahap 2'}
+              {!isChecking && <ArrowRight size={16} className="ml-2" />}
             </button>
+          </div>
+        </div>
+      )}
+
+      {step === 'preview2' && (
+        <div className="space-y-6">
+          <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg text-sm text-yellow-800">
+            <strong>Preview Tahap 2 (Cek Database Global):</strong> Mengecek duplikasi dengan data yang <strong>sudah ada di Supabase</strong> berdasarkan <strong>INV + Nama Klien</strong>.
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             <div className="bg-green-50 p-6 rounded-lg border border-green-200 text-center">
+                <div className="text-3xl font-bold text-green-700">{mappedData.newValid?.length || 0}</div>
+                <div className="text-sm text-green-700 uppercase font-bold mt-2">Data Baru</div>
+                <div className="text-xs text-green-600/70 mt-1 capitalize font-normal">Aman untuk di-import</div>
+             </div>
+             <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200 text-center">
+                <div className="text-3xl font-bold text-yellow-700">{mappedData.globalDuplicates?.length || 0}</div>
+                <div className="text-sm text-yellow-700 uppercase font-bold mt-2">Duplikat Database</div>
+                <div className="text-xs text-yellow-600/70 mt-1 capitalize font-normal">Sudah pernah masuk sebelumnya</div>
+             </div>
+          </div>
+
+          <div className="flex justify-between pt-6 border-t border-gray-200">
+            <button 
+              onClick={() => setStep('preview1')}
+              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 flex items-center"
+            >
+              <ArrowLeft size={16} className="mr-2" /> Kembali
+            </button>
+            <div className="space-x-3">
+               <button 
+                 onClick={() => handleImport(false)}
+                 disabled={!mappedData.newValid?.length}
+                 className="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 disabled:border-blue-300 disabled:text-blue-300 transition-colors"
+               >
+                 Import Data Baru Saja
+               </button>
+               <button 
+                 onClick={() => handleImport(true)}
+                 disabled={!mappedData.newValid?.length && !mappedData.globalDuplicates?.length}
+                 className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+               >
+                 Import Semua ({ (mappedData.newValid?.length || 0) + (mappedData.globalDuplicates?.length || 0) } Data)
+               </button>
+            </div>
           </div>
         </div>
       )}

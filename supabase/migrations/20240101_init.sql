@@ -64,6 +64,7 @@ CREATE TABLE alhamdulillah (
     brand TEXT,
     sumber_klien TEXT,
     status_klien TEXT,
+    status TEXT,
     nama_klien TEXT,
     pic_sales TEXT,
     transaksi TEXT,

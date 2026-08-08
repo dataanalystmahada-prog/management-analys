@@ -43,6 +43,7 @@ export interface AlhamdulillahRecord {
   brand: string | null;
   sumber_klien: string | null;
   status_klien: string | null;
+  status: string | null;
   nama_klien: string | null;
   pic_sales: string | null;
   transaksi: string | null;
